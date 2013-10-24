@@ -6,6 +6,7 @@ import java.net.InetAddress
 import com.turn.ttorrent.client.{Client, SharedTorrent}
 
 object Main {
+  org.apache.log4j.BasicConfigurator.configure()
   def main(args: Array[String]) {
     val client = new Client(
       InetAddress.getLocalHost,
@@ -14,5 +15,6 @@ object Main {
     println("Download from torrent %s begun to %s".format(args(0), args(1)))
     client.waitForCompletion()
     println("Download Complete!")
+    Thread.sleep(10000)
   }
-  }
+}
