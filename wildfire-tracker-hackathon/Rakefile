@@ -1,0 +1,39 @@
+require 'net/http'
+require 'yaml'
+# require 'rugged'
+
+namespace :repos do
+  @repos = YAML.load_file 'config/repos.yml'
+
+  task :clone do
+    @repos.each do |repo, url|
+      if Dir.exist? File.join 'repos', repo.to_s
+        puts "#{repo} already exists, skipping"
+      else
+        puts "cloning repo #{repo} via #{url}"
+
+        # libgit2 doesn't support clones via https or ssh which means we're unable
+        # to clone from rugged for now, uncomment when supported
+        # Rugged::Repository.clone_at url, File.join('repos', repo)
+
+        IO.popen(['git clone', url, File.join('repos', repo.to_s)].join("\s")) do |io|
+          puts io.gets
+        end
+      end
+    end
+  end
+end
+
+task :deploy, [:repo, :commit] do |task, args|
+  args.with_defaults repo: 'php', commit: 'head'
+
+  response = Net::HTTP.start '0.0.0.0', 6969 do |http|
+    http.request Net::HTTP::Post.new File.join '/deploy', args.repo, args.commit
+  end
+
+  if response.kind_of? Net::HTTPSuccess
+    puts response.body
+  else
+    puts "failed"
+  end
+end

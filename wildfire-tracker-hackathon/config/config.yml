@@ -1,0 +1,19 @@
+---
+:app_dir: /var/wildfire/app/current
+:repos_dir: repos
+:torrents_dir: torrents
+:downloads_dir: downloads
+:deploy_key_delimiter: __
+:rsync_options:
+  - recursive
+  - cvs-exclude
+:tracker:
+  :url: http://<host>:6969/announce
+  :compact: true
+  :allow_ip_override: false
+  :cleanup_interval: 600
+  :announce_interval: 10
+  :scrape_interval: 5
+  :min_interval: 10
+  :default_peers: 100
+  :max_peers: 1000
